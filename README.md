@@ -33,7 +33,7 @@ source venv/bin/activate        # Mac/Linux
 pip install sentence-transformers chromadb anthropic google-generativeai
 ```
 
-**3. Set API keys**
+**3. Set API keys (use `set` for windows)**
 
 For the Claude version:
 ```bash
