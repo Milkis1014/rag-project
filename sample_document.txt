@@ -1,0 +1,61 @@
+A Practical Guide to Neural Networks and Deep Learning
+
+Chapter 1: What Is a Neural Network?
+
+A neural network is a computational model loosely inspired by the structure of biological brains. It consists of layers of interconnected nodes, or neurons, each of which performs a simple mathematical operation. The power of neural networks comes not from any single neuron, but from the complex patterns that emerge when millions of them are composed together.
+
+At its core, a single neuron takes a set of inputs, multiplies each by a weight, sums them up, adds a bias term, and passes the result through an activation function. The activation function determines whether and how strongly the neuron "fires." Common activation functions include ReLU (Rectified Linear Unit), sigmoid, and tanh.
+
+Networks are organized into layers. The first layer receives raw input data — pixels, token IDs, sensor readings. The final layer produces the output — a class probability, a predicted value, a generated token. The layers in between are called hidden layers, and they learn increasingly abstract representations of the data as depth increases.
+
+Chapter 2: Training — How Networks Learn
+
+Neural networks learn through a process called backpropagation combined with gradient descent. During a forward pass, data flows through the network and produces a prediction. That prediction is compared to the true label using a loss function, which quantifies how wrong the prediction was.
+
+During the backward pass, the gradient of the loss with respect to every weight in the network is computed using the chain rule of calculus. This gradient tells each weight which direction to move to reduce the loss. The optimizer then updates the weights accordingly, typically by a small step determined by the learning rate.
+
+Choosing the right learning rate is critical. Too large, and training diverges — the weights oscillate wildly and never settle. Too small, and training is painfully slow and may get stuck in local minima. Modern optimizers like Adam adaptively adjust the learning rate for each parameter, making training much more robust.
+
+Overfitting occurs when a model learns the training data so well that it fails to generalize to new examples. Techniques to combat overfitting include dropout (randomly zeroing out neurons during training), weight decay (penalizing large weights), early stopping (halting training when validation loss stops improving), and data augmentation (artificially expanding the training set).
+
+Chapter 3: Transformers and Attention
+
+The transformer architecture, introduced in the 2017 paper "Attention Is All You Need," revolutionized natural language processing and later spread to vision, audio, and multimodal tasks. Unlike recurrent networks, transformers process all tokens in a sequence simultaneously, making them highly parallelizable.
+
+The key mechanism in a transformer is self-attention. For each token in the input, self-attention computes a weighted sum of all other tokens, where the weights reflect how relevant each token is to the current one. This allows the model to capture long-range dependencies regardless of the distance between tokens in the sequence.
+
+Attention is computed using three learned projections: queries (Q), keys (K), and values (V). The attention score between two positions is the dot product of their query and key vectors, scaled by the square root of the dimension, then passed through a softmax. The output is the weighted sum of value vectors.
+
+Multi-head attention runs several attention operations in parallel, each with different learned projections. Each head can attend to different aspects of the relationships between tokens — one head might track syntactic agreement, another might capture coreference, and another might focus on semantic similarity.
+
+Transformers also include position encodings to inject information about token order, since the attention mechanism itself is permutation-invariant. In the original paper, these were fixed sinusoidal functions; modern models use learned position embeddings or relative position schemes like RoPE.
+
+Chapter 4: Large Language Models
+
+Large language models (LLMs) are transformers trained on massive text corpora to predict the next token given a sequence of preceding tokens. This seemingly simple objective forces the model to develop rich internal representations of grammar, facts, reasoning patterns, and even some degree of common sense.
+
+GPT-style models are decoder-only: they generate text autoregressively, one token at a time, each token conditioned on all previous ones. BERT-style models are encoder-only: they process the full sequence bidirectionally, producing contextual representations used for classification or retrieval tasks. Models like T5 use an encoder-decoder architecture for sequence-to-sequence tasks like translation and summarization.
+
+Scaling laws, discovered empirically by researchers at OpenAI and other labs, show that model performance improves predictably as a power law of three factors: model size (parameters), dataset size (tokens), and compute (FLOPs). This has motivated the race to train ever-larger models on ever-larger datasets.
+
+Instruction tuning and reinforcement learning from human feedback (RLHF) are fine-tuning techniques that align a pretrained LLM to follow user instructions and produce helpful, harmless, and honest outputs. Without these steps, a raw pretrained model will continue text in the style of its training data rather than answering questions or completing tasks.
+
+Chapter 5: Retrieval-Augmented Generation (RAG)
+
+Retrieval-Augmented Generation is a technique that enhances LLM outputs by grounding them in relevant external documents retrieved at inference time. Rather than relying solely on knowledge encoded in the model's weights, the system first retrieves relevant text passages and then uses those passages as context for generation.
+
+The basic RAG pipeline has two phases. In the ingestion phase, documents are split into chunks, each chunk is embedded into a dense vector using an embedding model, and the vectors are stored in a vector database alongside the original text. In the retrieval phase, the user's query is embedded, and the database is searched for the most similar chunk vectors using approximate nearest neighbor (ANN) search. The retrieved chunks are inserted into the LLM's prompt as context.
+
+The quality of a RAG system depends heavily on chunking strategy. Chunks that are too small may not contain enough context to be useful. Chunks that are too large may dilute the relevant information and exceed the LLM's context window. Overlapping chunks help ensure that information straddling a chunk boundary is not lost.
+
+Vector databases like ChromaDB, Pinecone, Weaviate, and FAISS are optimized for storing and querying high-dimensional vectors efficiently. They use indexing structures such as HNSW (Hierarchical Navigable Small World graphs) to perform approximate nearest neighbor search in milliseconds even across millions of vectors.
+
+Advanced RAG techniques include hybrid search (combining dense vector similarity with sparse keyword matching like BM25), re-ranking (using a cross-encoder to reorder retrieved results), and query rewriting (using an LLM to expand or reformulate the query before retrieval).
+
+Chapter 6: Embeddings in Practice
+
+Embedding models map text to dense vectors in a continuous semantic space. The most capable embedding models are themselves transformers, fine-tuned on large datasets of (query, relevant passage) pairs using contrastive learning objectives.
+
+Popular embedding models include OpenAI's text-embedding-3 series, Cohere's embed models, and open-source models like sentence-transformers' all-MiniLM-L6-v2 and BGE series. The right choice depends on your latency budget, whether you need to run locally, and the domain of your documents.
+
+Embedding quality directly determines retrieval quality. A weak embedding model may fail to recognize that "cardiac arrest" and "heart attack" refer to the same thing, or that a question about "fixing a bug" is semantically related to a passage about "resolving an error." Evaluating embedding models on your specific domain and query distribution is always worth doing before committing to one.
